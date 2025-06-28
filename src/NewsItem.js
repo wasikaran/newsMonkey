@@ -2,7 +2,7 @@ import React from 'react'
 
 const NewsItem = (props)=>{
 
-    let { title, description, imageUrl, newsurl, author, date, source } = props;
+    let { title, description, imageUrl, newsurl, author, date, source, badgeColor } = props;
     return (
       <div>
         <div className="card" style={{ width: '18rem' }}>
@@ -17,7 +17,7 @@ const NewsItem = (props)=>{
               top: "0",
               right: "0"
             }}>
-              <span className={`position-absolute top-0 start-100 translate-middle badge rounded-pill bg-${props.badgeColor}`}>
+              <span className={`position-absolute top-0 start-100 translate-middle badge rounded-pill bg-${badgeColor}`}>
 
                 {source}
               </span>

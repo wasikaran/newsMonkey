@@ -4,6 +4,7 @@ import Spinner from './spinner';
 import PropTypes from 'prop-types';
 import InfiniteScroll from "react-infinite-scroll-component";
 
+
 const News = (props) => {
 
   const [articles, setArticles] = useState([]);
@@ -33,30 +34,40 @@ const News = (props) => {
     };
     return colors[props.category] || "secondary";
   };
+const updateNews = async () => {
+  props.setProgress(10);
+  setLoading(true);
 
-  const updateNews = async () => {
-    props.setProgress(10);
-    const url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apikey}&pageSize=${props.pageSize}&page=${page}`;
-    setLoading(true);
-    let data = await fetch(url);
-    props.setProgress(30);
-    let parsedData = await data.json();
-    props.setProgress(70);
-    setArticles(parsedData.articles);
-    setLoading(false);
-    setTotalResults(parsedData.totalResults);
-    props.setProgress(100);
-  };
+const response = await fetch(process.env.PUBLIC_URL + '/data.json');
+  props.setProgress(30);
+  const jsonData = await response.json();
+  props.setProgress(70);
 
-  const fetchMoreData = async () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    const url = `https://newsapi.org/v2/top-headlines?country=us&category=${props.category}&apiKey=${props.apikey}&pageSize=${props.pageSize}&page=${page + 1}`;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    setArticles(articles.concat(parsedData.articles));
-    setTotalResults(parsedData.totalResults);
-  };
+  const categoryData = jsonData[props.category];
+  const start = 0;
+  const end = props.pageSize;
+
+  setArticles(categoryData.articles.slice(start, end));
+  setTotalResults(categoryData.totalResults);
+  setLoading(false);
+  props.setProgress(100);
+};
+
+const fetchMoreData = async () => {
+const response = await fetch(process.env.PUBLIC_URL + '/data.json');
+  const jsonData = await response.json();
+  const categoryData = jsonData[props.category];
+
+  const nextPage = page + 1;
+  setPage(nextPage);
+
+  const start = page * props.pageSize;
+  const end = start + props.pageSize;
+
+  const newArticles = categoryData.articles.slice(start, end);
+  setArticles(articles.concat(newArticles));
+};
+
 
   return (
     <div className='container p-5'>
